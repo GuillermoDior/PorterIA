@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PorterIA — Gestión clara para tu comunidad</title>
+  <meta name="description" content="PorterIA centraliza reuniones, incidencias, actas y recordatorios para comunidades de vecinos. Transparencia real y menos tiempo perdido." />
+  <meta property="og:title" content="PorterIA — Gestión clara para tu comunidad" />
+  <meta property="og:description" content="Centraliza reuniones, incidencias, actas y recordatorios en una app sencilla y moderna." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=1200&auto=format&fit=crop" />
+  <!-- Favicon inline (SVG) -->
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="%2306b6d4"/><stop offset="1" stop-color="%230ea5a6"/></linearGradient></defs>
+    <rect width="64" height="64" rx="12" fill="%23111"/>
+    <g transform="translate(10,8)" fill="url(%23g)">
+      <rect x="6" y="10" width="32" height="30" rx="3" fill="none" stroke="%23a7f3d0" stroke-width="2"/>
+      <rect x="12" y="16" width="6" height="6" rx="1"/>
+      <rect x="24" y="16" width="6" height="6" rx="1"/>
+      <rect x="12" y="26" width="6" height="6" rx="1"/>
+      <rect x="24" y="26" width="6" height="6" rx="1"/>
+      <rect x="18" y="36" width="8" height="6" rx="1" fill="%23a7f3d0"/>
+      <path d="M4 10 L22 0 L40 10" fill="%23111" stroke="%23a7f3d0" stroke-width="2"/>
+    </g>
+  </svg>' />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .glass { backdrop-filter: blur(8px); background: color-mix(in oklab, white 78%, transparent); }
+    @media (prefers-color-scheme: dark){ .glass { background: color-mix(in oklab, black 55%, transparent); } }
+    .carousel::-webkit-scrollbar { display: none; }
+    .shadow-soft { box-shadow: 0 6px 24px rgba(2,6,23,.08), 0 2px 8px rgba(2,6,23,.06); }
+    .ring-faint { box-shadow: inset 0 0 0 1px rgba(15,23,42,.08); }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+  <script>
+    // Configuración
+    const CONFIG = {
+      emailContacto: "dior.guillermo@gmail.com",
+      img: {
+        // Hero fachada
+        hero: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=1800&auto=format&fit=crop",
+        // Valor / mockup
+        mock1: "https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1600&auto=format&fit=crop",
+        // Cómo funciona
+        organiza: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop", // reunión / calendario
+        // Dos imágenes con Fallbacks (incidencias/mantenimiento)
+        visibilidad_fallbacks: [
+          "https://images.unsplash.com/photo-1581092795360-fd1a86c2b389?q=80&w=1600&auto=format&fit=crop", // mantenimiento (primary)
+          "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1600&auto=format&fit=crop", // herramientas/técnico
+          "https://placehold.co/1600x1067?text=Incidencias+y+Mantenimiento&font=inter"
+        ],
+        mantenimiento_fallbacks: [
+          "https://images.unsplash.com/photo-1606229365485-93a3b6b0d8f1?q=80&w=1600&auto=format&fit=crop", // técnico revisando instalación
+          "https://images.unsplash.com/photo-1597008635633-01c3a3d5d7b2?q=80&w=1600&auto=format&fit=crop", // manitas / reparación
+          "https://placehold.co/1600x1067?text=Gestión+de+Incidencias&font=inter"
+        ],
+        conserva: "https://images.unsplash.com/photo-1457694587812-e8bf29a43845?q=80&w=1600&auto=format&fit=crop" // documentos / archivo
+      }
+    };
+
+    // Utilidad: asigna una lista de URLs con fallback
+    function setWithFallback(imgEl, urls) {
+      let i = 0;
+      const trySet = () => {
+        if (i >= urls.length) return;
+        imgEl.src = urls[i++];
+      };
+      imgEl.onerror = trySet;
+      trySet();
+    }
+
+    // Carga inicial
+    document.addEventListener("DOMContentLoaded", () => {
+      // Email + año
+      document.querySelectorAll("[data-email]").forEach(el => el.textContent = CONFIG.emailContacto);
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Hero
+      const hero = document.getElementById("hero");
+      hero.style.backgroundImage =
+        `linear-gradient(to bottom right, rgba(2,6,23,.65), rgba(15,23,42,.55)), url('${CONFIG.img.hero}')`;
+
+      // Valor
+      document.getElementById("valorImg").src = CONFIG.img.mock1;
+      // Gestión de incidencias y mantenimiento (con fallbacks robustos)
+      setWithFallback(document.getElementById("valorImg2"), CONFIG.img.mantenimiento_fallbacks);
+
+      // Cómo funciona (3 imágenes alineadas a las 3 cajas)
+      document.getElementById("imgOrganiza").src = CONFIG.img.organiza;
+      setWithFallback(document.getElementById("imgVisibilidad"), CONFIG.img.visibilidad_fallbacks);
+      document.getElementById("imgConserva").src = CONFIG.img.conserva;
+
+      // Contacto
+      document.getElementById("reunionImg").src = CONFIG.img.organiza;
+
+      // Precificador inicial
+      updatePrice();
+    });
+
+    // Envío simulado del formulario (preview)
+    function enviarFormulario(e){
+      e.preventDefault();
+      const msg = document.getElementById("msg");
+      msg.textContent = "✅ ¡Gracias! Hemos recibido tu solicitud (simulación local).";
+      msg.className = "text-emerald-600 mt-3";
+      e.target.reset();
+    }
+
+    // ======= Pricing (2 meses gratis; luego 10€ hasta 10 viviendas + 1€/vivienda extra) =======
+    function calcPrice(n) {
+      n = Math.max(1, Math.floor(n||1));
+      return n <= 10 ? 10 : 10 + (n - 10) * 1;
+    }
+    function updatePrice(){
+      const n = parseInt(document.getElementById('units').value || '10', 10);
+      const price = calcPrice(n);
+      document.getElementById('unitsVal').textContent = n;
+      document.getElementById('priceVal').textContent = price.toLocaleString('es-ES', { minimumFractionDigits: 0 });
+    }
+  </script>
+
+  <!-- NAV -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/75 glass">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <!-- Logo SVG -->
+        <svg aria-hidden="true" class="h-8 w-8" viewBox="0 0 64 64" fill="none">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06b6d4"/><stop offset="1" stop-color="#0ea5a6"/></linearGradient></defs>
+          <rect x="10" y="18" width="44" height="30" rx="4" stroke="url(#lg)" stroke-width="3"></rect>
+          <path d="M14 20 L32 10 L50 20" stroke="#a7f3d0" stroke-width="3" fill="none"/>
+          <rect x="22" y="26" width="8" height="8" rx="1" fill="url(#lg)"></rect>
+          <rect x="34" y="26" width="8" height="8" rx="1" fill="url(#lg)"></rect>
+          <rect x="28" y="36" width="8" height="8" rx="1" fill="#a7f3d0"></rect>
+        </svg>
+        <span class="text-xl font-semibold tracking-tight">PorterIA</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#valor" class="text-sm font-medium text-slate-700 hover:text-slate-900">Valor</a>
+        <a href="#porque" class="text-sm font-medium text-slate-700 hover:text-slate-900">Por qué</a>
+        <a href="#como" class="text-sm font-medium text-slate-700 hover:text-slate-900">Cómo funciona</a>
+        <a href="#precios" class="text-sm font-medium text-slate-700 hover:text-slate-900">Precios</a>
+        <a href="#contacto" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Solicitar demo</a>
+      </nav>
+      <a href="#contacto" class="md:hidden rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Empezar</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero" class="relative bg-center bg-cover text-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium ring-1 ring-white/30">
+          <span class="size-2 rounded-full bg-emerald-400"></span> Nueva — Gestión clara y sin fricción
+        </span>
+        <h1 class="mt-5 text-4xl sm:text-6xl font-extrabold leading-tight">
+          Todo lo de tu comunidad, <span class="underline decoration-emerald-400/70 decoration-4 underline-offset-4">en orden</span>
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl text-white/90">
+          Reuniones, incidencias, actas y recordatorios en un solo lugar. Menos ruido, más claridad.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="#contacto" class="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-semibold text-white hover:bg-emerald-600">Solicitar demo</a>
+          <a href="#como" class="inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-semibold ring-1 ring-inset ring-white/60 text-white hover:bg-white/10">Ver cómo funciona</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALOR -->
+  <section id="valor" class="py-16 sm:py-24 bg-slate-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid xl:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Valor inmediato y medible</h2>
+        <p class="text-slate-600 text-lg">
+          Centraliza lo esencial y elimina la dispersión entre correo y chat. Transparencia para todos.
+        </p>
+        <ul class="space-y-3 text-slate-700">
+          <li class="flex gap-3"><span class="mt-1 inline-block size-2 rounded-full bg-emerald-500"></span><span><strong>Calendario unificado:</strong> reuniones, revisiones, cortes y pagos.</span></li>
+          <li class="flex gap-3"><span class="mt-1 inline-block size-2 rounded-full bg-emerald-500"></span><span><strong>Incidencias con fotos:</strong> estados claros y notificaciones.</span></li>
+          <li class="flex gap-3"><span class="mt-1 inline-block size-2 rounded-full bg-emerald-500"></span><span><strong>Actas y acuerdos:</strong> buscables y ordenados.</span></li>
+          <li class="flex gap-3"><span class="mt-1 inline-block size-2 rounded-full bg-emerald-500"></span><span><strong>Roles y permisos:</strong> presidente, admin y vecinos.</span></li>
+        </ul>
+        <div class="flex gap-3">
+          <a href="#contacto" class="rounded-full bg-slate-900 px-6 py-3 text-white font-semibold hover:bg-slate-700">Quiero una demo</a>
+          <a href="#faq" class="rounded-full px-6 py-3 ring-1 ring-slate-300 font-semibold text-slate-700 hover:bg-slate-100">Preguntas frecuentes</a>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <figure class="overflow-hidden rounded-3xl ring-1 ring-slate-200 shadow-soft">
+          <img id="valorImg" alt="Vista general de la app" class="w-full h-full object-cover aspect-[4/3]" />
+        </figure>
+        <figure class="overflow-hidden rounded-3xl ring-1 ring-slate-200 shadow-soft">
+          <img id="valorImg2" alt="Gestión de incidencias y mantenimiento" class="w-full h-full object-cover aspect-[4/3]" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ PorterIA (Métricas) -->
+  <section id="porque" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">¿Por qué PorterIA?</h2>
+      <p class="mt-4 text-center text-slate-600 max-w-2xl mx-auto">
+        Resultados de pilotos con administradores y presidentes de comunidad.
+      </p>
+
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="rounded-2xl p-6 ring-1 ring-slate-200 bg-white text-center">
+          <div class="text-4xl font-extrabold text-emerald-600">-40%</div>
+          <p class="mt-2 text-slate-600">Tiempo en gestión de incidencias</p>
+        </div>
+        <div class="rounded-2xl p-6 ring-1 ring-slate-200 bg-white text-center">
+          <div class="text-4xl font-extrabold text-emerald-600">-60%</div>
+          <p class="mt-2 text-slate-600">Mensajes dispersos (email/WhatsApp)</p>
+        </div>
+        <div class="rounded-2xl p-6 ring-1 ring-slate-200 bg-white text-center">
+          <div class="text-4xl font-extrabold text-emerald-600">+70%</div>
+          <p class="mt-2 text-slate-600">Asistencia a reuniones</p>
+        </div>
+        <div class="rounded-2xl p-6 ring-1 ring-slate-200 bg-white text-center">
+          <div class="text-4xl font-extrabold text-emerald-600">100%</div>
+          <p class="mt-2 text-slate-600">Actas localizables en segundos</p>
+        </div>
+      </div>
+
+      <p class="mt-6 text-xs text-slate-500 text-center">
+        *Estimaciones basadas en pruebas piloto y buenas prácticas; los resultados pueden variar según la comunidad.
+      </p>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section id="como" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Cómo funciona</h2>
+      <p class="mt-4 text-center text-slate-600 max-w-2xl mx-auto">Un flujo simple para aportar valor desde el primer día.</p>
+
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="rounded-2xl ring-faint p-6">
+          <div class="text-sm font-semibold text-emerald-600">1 · Organiza</div>
+          <h3 class="mt-1 font-semibold text-lg">Calendario compartido</h3>
+          <p class="mt-2 text-slate-600">Convocatorias, revisiones y pagos en un solo lugar visible para todos.</p>
+        </div>
+        <div class="rounded-2xl ring-faint p-6">
+          <div class="text-sm font-semibold text-emerald-600">2 · Da visibilidad</div>
+          <h3 class="mt-1 font-semibold text-lg">Incidencias con fotos</h3>
+          <p class="mt-2 text-slate-600">Sube imágenes, cambia estados y notifica a quien corresponda.</p>
+        </div>
+        <div class="rounded-2xl ring-faint p-6">
+          <div class="text-sm font-semibold text-emerald-600">3 · Conserva</div>
+          <h3 class="mt-1 font-semibold text-lg">Actas y acuerdos</h3>
+          <p class="mt-2 text-slate-600">Histórico accesible y buscable, sin perder información.</p>
+        </div>
+      </div>
+
+      <!-- 3 imágenes alineadas con las 3 cajas -->
+      <div class="mt-10 grid md:grid-cols-3 gap-6">
+        <figure class="overflow-hidden rounded-3xl ring-1 ring-slate-200 shadow-soft">
+          <img id="imgOrganiza" class="w-full h-[220px] object-cover" alt="Organiza — calendario y reuniones" />
+          <figcaption class="px-4 py-3 text-sm text-slate-600">1. Organiza — calendario y reuniones</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-3xl ring-1 ring-slate-200 shadow-soft">
+          <img id="imgVisibilidad" class="w-full h-[220px] object-cover" alt="Da visibilidad — incidencias y mantenimiento" />
+          <figcaption class="px-4 py-3 text-sm text-slate-600">2. Da visibilidad — incidencias</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-3xl ring-1 ring-slate-200 shadow-soft">
+          <img id="imgConserva" class="w-full h-[220px] object-cover" alt="Conserva — actas y documentos" />
+          <figcaption class="px-4 py-3 text-sm text-slate-600">3. Conserva — actas y documentos</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="py-16 bg-slate-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Lo que dicen los primeros usuarios</h2>
+      <div class="mt-10 grid md:grid-cols-3 gap-6">
+        <figure class="rounded-2xl ring-faint p-6 bg-white">
+          <blockquote class="text-slate-700">“Antes todo eran correos y grupos eternos. Ahora lo tengo claro en 5 minutos.”</blockquote>
+          <figcaption class="mt-4 text-sm text-slate-500">Ana M., Presidenta</figcaption>
+        </figure>
+        <figure class="rounded-2xl ring-faint p-6 bg-white">
+          <blockquote class="text-slate-700">“Subo una incidencia con foto y recibo avisos cuando cambia el estado.”</blockquote>
+          <figcaption class="mt-4 text-sm text-slate-500">Rubén G., Vecino</figcaption>
+        </figure>
+        <figure class="rounded-2xl ring-faint p-6 bg-white">
+          <blockquote class="text-slate-700">“Me ahorra llamadas repetidas y búsquedas de actas. Todo en un sitio.”</blockquote>
+          <figcaption class="mt-4 text-sm text-slate-500">Lucía P., Administradora</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRECIOS -->
+  <section id="precios" class="py-16 sm:py-24 bg-slate-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Precios simples y transparentes</h2>
+      <p class="mt-4 text-center text-slate-600 max-w-2xl mx-auto">
+        <strong>2 meses gratis</strong>. Después, <strong>10 €/mes</strong> por comunidad (hasta 10 viviendas) y <strong>+1 €/mes</strong> por cada vivienda adicional.
+      </p>
+
+      <div class="mt-10 grid lg:grid-cols-2 gap-6 items-stretch">
+        <!-- Plan único -->
+        <div class="rounded-3xl bg-white ring-2 ring-emerald-500 p-6 shadow-xl flex flex-col">
+          <div class="text-sm font-semibold text-emerald-600">Plan PorterIA</div>
+          <h3 class="mt-2 text-3xl font-extrabold">2 meses gratis</h3>
+          <p class="mt-2 text-slate-600">Después, pago mensual según viviendas.</p>
+          <ul class="mt-6 space-y-3 text-slate-700">
+            <li>✅ Piloto incluido</li>
+            <li>✅ Estados de incidencias y trazabilidad</li>
+            <li>✅ Recordatorios automáticos</li>
+            <li>✅ Exportación de datos (CSV/PDF)</li>
+            <li>✅ Soporte</li>
+          </ul>
+          <a href="#contacto" class="mt-6 inline-flex justify-center rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-700">
+            Solicitar demo
+          </a>
+        </div>
+
+        <!-- Calculadora -->
+        <div class="rounded-3xl bg-white ring-1 ring-slate-200 p-6 shadow-soft">
+          <h4 class="text-xl font-bold">Calcula tu precio después del periodo gratis</h4>
+          <p class="mt-2 text-slate-600">Indica el número de viviendas de tu comunidad.</p>
+          <div class="mt-6">
+            <input id="units" type="range" min="1" max="120" value="10" oninput="updatePrice()" class="w-full">
+            <div class="mt-3 text-sm text-slate-700">Viviendas: <span id="unitsVal" class="font-semibold">10</span></div>
+          </div>
+          <div class="mt-6 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+            <div class="text-sm text-slate-600">Precio estimado tras los 2 meses gratis:</div>
+            <div class="mt-1 text-3xl font-extrabold"><span id="priceVal">10</span> € / mes</div>
+            <p class="mt-2 text-xs text-slate-500">Cálculo: 10 € hasta 10 viviendas; +1 € por vivienda desde la nº 11.</p>
+          </div>
+          <a href="#contacto" class="mt-6 inline-flex justify-center rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-white hover:bg-emerald-600">
+            Empezar (2 meses gratis)
+          </a>
+        </div>
+      </div>
+
+      <p class="mt-6 text-xs text-slate-500 text-center">
+        Los precios no incluyen impuestos. Descuentos por pago anual disponibles.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Preguntas frecuentes</h2>
+      <div class="mt-8 divide-y divide-slate-200">
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between">
+            <span class="font-semibold">¿Necesita instalación en servidores?</span>
+            <span class="transition group-open:rotate-180">⌄</span>
+          </summary>
+          <p class="mt-3 text-slate-600">No, funciona en la nube y desde móvil/escritorio.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between">
+            <span class="font-semibold">¿Cómo gestionáis la privacidad?</span>
+            <span class="transition group-open:rotate-180">⌄</span>
+          </summary>
+          <p class="mt-3 text-slate-600">Recogemos lo mínimo y ofrecemos exportación bajo solicitud. Buenas prácticas de seguridad.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between">
+            <span class="font-semibold">¿Se integra con mi gestor actual?</span>
+            <span class="transition group-open:rotate-180">⌄</span>
+          </summary>
+          <p class="mt-3 text-slate-600">De inicio, importación vía CSV/correo. Añadiremos conectores según demanda.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="py-16 sm:py-24 bg-slate-900 text-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Solicita tu demo</h2>
+        <p class="mt-4 text-white/80">Cuéntanos brevemente tu comunidad y te contactaremos en 24–48h.</p>
+        <div class="mt-8 overflow-hidden rounded-3xl ring-1 ring-white/10">
+          <img id="reunionImg" class="w-full h-auto object-cover" alt="Reunión de comunidad" />
+        </div>
+      </div>
+
+      <form onsubmit="enviarFormulario(event)" class="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 space-y-4">
+        <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" />
+        <div>
+          <label for="nombre" class="block text-sm font-medium">Nombre y apellidos *</label>
+          <input id="nombre" name="nombre" required type="text" autocomplete="name"
+                 class="mt-1 w-full rounded-xl border-0 bg-white/95 px-4 py-3 text-slate-900 placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="María García" />
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium">Email *</label>
+          <input id="email" name="email" required type="email" autocomplete="email"
+                 class="mt-1 w-full rounded-xl border-0 bg-white/95 px-4 py-3 text-slate-900 placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="tu@correo.com" />
+        </div>
+        <div>
+          <label for="mensaje" class="block text-sm font-medium">Mensaje *</label>
+          <textarea id="mensaje" name="mensaje" required rows="4"
+                    class="mt-1 w-full rounded-xl border-0 bg-white/95 px-4 py-3 text-slate-900 placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    placeholder="Ej.: Queremos centralizar actas e incidencias…"></textarea>
+        </div>
+        <button type="submit"
+                class="w-full rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white hover:bg-emerald-600">
+          Enviar
+        </button>
+        <p id="msg" class="text-sm mt-2"></p>
+        <p class="text-xs text-white/70 mt-2">O escríbenos a <span data-email></span></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <p class="text-sm text-slate-500">© <span id="year"></span> PorterIA. Todos los derechos reservados.</p>
+      <div class="flex gap-6 text-sm">
+        <a href="#precios" class="text-slate-500 hover:text-slate-900">Precios</a>
+        <a href="#faq" class="text-slate-500 hover:text-slate-900">FAQ</a>
+        <a href="#contacto" class="text-slate-500 hover:text-slate-900">Contacto</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
