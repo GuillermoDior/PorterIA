@@ -36,41 +36,20 @@
 </head>
 <body class="bg-white text-slate-800 antialiased">
   <script>
-    // Configuración
+    // Config
     const CONFIG = {
       emailContacto: "dior.guillermo@gmail.com",
       img: {
         // Hero fachada
         hero: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=1800&auto=format&fit=crop",
-        // Valor / mockup
+        // Valor / mockups
         mock1: "https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1600&auto=format&fit=crop",
-        // Cómo funciona
-        organiza: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop", // reunión / calendario
-        // Dos imágenes con Fallbacks (incidencias/mantenimiento)
-        visibilidad_fallbacks: [
-          "https://images.unsplash.com/photo-1581092795360-fd1a86c2b389?q=80&w=1600&auto=format&fit=crop", // mantenimiento (primary)
-          "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1600&auto=format&fit=crop", // herramientas/técnico
-          "https://placehold.co/1600x1067?text=Incidencias+y+Mantenimiento&font=inter"
-        ],
-        mantenimiento_fallbacks: [
-          "https://images.unsplash.com/photo-1606229365485-93a3b6b0d8f1?q=80&w=1600&auto=format&fit=crop", // técnico revisando instalación
-          "https://images.unsplash.com/photo-1597008635633-01c3a3d5d7b2?q=80&w=1600&auto=format&fit=crop", // manitas / reparación
-          "https://placehold.co/1600x1067?text=Gestión+de+Incidencias&font=inter"
-        ],
-        conserva: "https://images.unsplash.com/photo-1457694587812-e8bf29a43845?q=80&w=1600&auto=format&fit=crop" // documentos / archivo
+        // Cómo funciona (coherentes con las 3 cajas)
+        organiza: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop",     // reunión / calendario
+        visibilidad: "https://images.unsplash.com/photo-1581092795360-fd1a86c2b389?q=80&w=1600&auto=format&fit=crop", // mantenimiento / incidencia
+        conserva: "https://images.unsplash.com/photo-1457694587812-e8bf29a43845?q=80&w=1600&auto=format&fit=crop",    // documentos / archivo
       }
     };
-
-    // Utilidad: asigna una lista de URLs con fallback
-    function setWithFallback(imgEl, urls) {
-      let i = 0;
-      const trySet = () => {
-        if (i >= urls.length) return;
-        imgEl.src = urls[i++];
-      };
-      imgEl.onerror = trySet;
-      trySet();
-    }
 
     // Carga inicial
     document.addEventListener("DOMContentLoaded", () => {
@@ -85,19 +64,15 @@
 
       // Valor
       document.getElementById("valorImg").src = CONFIG.img.mock1;
-      // Gestión de incidencias y mantenimiento (con fallbacks robustos)
-      setWithFallback(document.getElementById("valorImg2"), CONFIG.img.mantenimiento_fallbacks);
+      document.getElementById("valorImg2").src = CONFIG.img.visibilidad;
 
       // Cómo funciona (3 imágenes alineadas a las 3 cajas)
       document.getElementById("imgOrganiza").src = CONFIG.img.organiza;
-      setWithFallback(document.getElementById("imgVisibilidad"), CONFIG.img.visibilidad_fallbacks);
+      document.getElementById("imgVisibilidad").src = CONFIG.img.visibilidad;
       document.getElementById("imgConserva").src = CONFIG.img.conserva;
 
       // Contacto
       document.getElementById("reunionImg").src = CONFIG.img.organiza;
-
-      // Precificador inicial
-      updatePrice();
     });
 
     // Envío simulado del formulario (preview)
@@ -107,18 +82,6 @@
       msg.textContent = "✅ ¡Gracias! Hemos recibido tu solicitud (simulación local).";
       msg.className = "text-emerald-600 mt-3";
       e.target.reset();
-    }
-
-    // ======= Pricing (2 meses gratis; luego 10€ hasta 10 viviendas + 1€/vivienda extra) =======
-    function calcPrice(n) {
-      n = Math.max(1, Math.floor(n||1));
-      return n <= 10 ? 10 : 10 + (n - 10) * 1;
-    }
-    function updatePrice(){
-      const n = parseInt(document.getElementById('units').value || '10', 10);
-      const price = calcPrice(n);
-      document.getElementById('unitsVal').textContent = n;
-      document.getElementById('priceVal').textContent = price.toLocaleString('es-ES', { minimumFractionDigits: 0 });
     }
   </script>
 
@@ -300,42 +263,57 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Precios simples y transparentes</h2>
       <p class="mt-4 text-center text-slate-600 max-w-2xl mx-auto">
-        <strong>2 meses gratis</strong>. Después, <strong>10 €/mes</strong> por comunidad (hasta 10 viviendas) y <strong>+1 €/mes</strong> por cada vivienda adicional.
+        Empieza con un piloto y escala cuando tu comunidad lo necesite.
       </p>
 
-      <div class="mt-10 grid lg:grid-cols-2 gap-6 items-stretch">
-        <!-- Plan único -->
-        <div class="rounded-3xl bg-white ring-2 ring-emerald-500 p-6 shadow-xl flex flex-col">
-          <div class="text-sm font-semibold text-emerald-600">Plan PorterIA</div>
-          <h3 class="mt-2 text-3xl font-extrabold">2 meses gratis</h3>
-          <p class="mt-2 text-slate-600">Después, pago mensual según viviendas.</p>
+      <div class="mt-10 grid lg:grid-cols-3 gap-6">
+        <!-- Piloto -->
+        <div class="rounded-3xl bg-white ring-1 ring-slate-200 p-6 flex flex-col">
+          <div class="text-sm font-semibold text-emerald-600">Piloto</div>
+          <h3 class="mt-2 text-3xl font-extrabold">Gratis</h3>
+          <p class="mt-2 text-slate-600">Hasta 10 viviendas</p>
           <ul class="mt-6 space-y-3 text-slate-700">
-            <li>✅ Piloto incluido</li>
+            <li>✅ Calendario y convocatorias</li>
+            <li>✅ Incidencias con fotos (básico)</li>
+            <li>✅ Actas y documentos</li>
+            <li>✅ Notificaciones email</li>
+          </ul>
+          <a href="#contacto" class="mt-6 inline-flex justify-center rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-white hover:bg-emerald-600">
+            Empezar piloto
+          </a>
+        </div>
+
+        <!-- Comunidad Mediana -->
+        <div class="rounded-3xl bg-white ring-2 ring-emerald-500 p-6 shadow-xl flex flex-col">
+          <div class="text-sm font-semibold text-emerald-600">Más popular</div>
+          <h3 class="mt-2 text-3xl font-extrabold">€39<span class="text-base font-semibold text-slate-500">/mes</span></h3>
+          <p class="mt-2 text-slate-600">11–40 viviendas</p>
+          <ul class="mt-6 space-y-3 text-slate-700">
+            <li>✅ Todo lo del Piloto</li>
             <li>✅ Estados de incidencias y trazabilidad</li>
             <li>✅ Recordatorios automáticos</li>
             <li>✅ Exportación de datos (CSV/PDF)</li>
-            <li>✅ Soporte</li>
+            <li>✅ Soporte prioritario</li>
           </ul>
           <a href="#contacto" class="mt-6 inline-flex justify-center rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-700">
             Solicitar demo
           </a>
         </div>
 
-        <!-- Calculadora -->
-        <div class="rounded-3xl bg-white ring-1 ring-slate-200 p-6 shadow-soft">
-          <h4 class="text-xl font-bold">Calcula tu precio después del periodo gratis</h4>
-          <p class="mt-2 text-slate-600">Indica el número de viviendas de tu comunidad.</p>
-          <div class="mt-6">
-            <input id="units" type="range" min="1" max="120" value="10" oninput="updatePrice()" class="w-full">
-            <div class="mt-3 text-sm text-slate-700">Viviendas: <span id="unitsVal" class="font-semibold">10</span></div>
-          </div>
-          <div class="mt-6 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
-            <div class="text-sm text-slate-600">Precio estimado tras los 2 meses gratis:</div>
-            <div class="mt-1 text-3xl font-extrabold"><span id="priceVal">10</span> € / mes</div>
-            <p class="mt-2 text-xs text-slate-500">Cálculo: 10 € hasta 10 viviendas; +1 € por vivienda desde la nº 11.</p>
-          </div>
+        <!-- Comunidad Grande -->
+        <div class="rounded-3xl bg-white ring-1 ring-slate-200 p-6 flex flex-col">
+          <div class="text-sm font-semibold text-emerald-600">Comunidad Grande</div>
+          <h3 class="mt-2 text-3xl font-extrabold">€89<span class="text-base font-semibold text-slate-500">/mes</span></h3>
+          <p class="mt-2 text-slate-600">41+ viviendas</p>
+          <ul class="mt-6 space-y-3 text-slate-700">
+            <li>✅ Todo lo de Mediana</li>
+            <li>✅ Múltiples fincas y portales</li>
+            <li>✅ Roles avanzados y permisos</li>
+            <li>✅ Branding de la comunidad</li>
+            <li>✅ SLA de soporte</li>
+          </ul>
           <a href="#contacto" class="mt-6 inline-flex justify-center rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-white hover:bg-emerald-600">
-            Empezar (2 meses gratis)
+            Hablar con ventas
           </a>
         </div>
       </div>
@@ -346,7 +324,7 @@
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- FAQ (opcional, se mantiene) -->
   <section id="faq" class="py-16">
     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
       <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">Preguntas frecuentes</h2>
